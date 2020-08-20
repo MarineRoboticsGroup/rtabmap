@@ -1,7 +1,6 @@
 rtabmap
 =======
 
-[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Ffeat%252Fjenkins_ci)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/feat%252Fjenkins_ci/)
 [![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Fmaster)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/master/)
 
 
