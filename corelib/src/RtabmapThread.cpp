@@ -540,6 +540,7 @@ void RtabmapThread::process()
 					this->post(new RtabmapGoalStatusEvent(_rtabmap->getPathStatus()));
 				}
 			}
+			_rtabmap->communicateKF(&data.info());
 		}
 		else
 		{
