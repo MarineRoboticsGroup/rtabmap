@@ -149,9 +149,9 @@ double Link::transVariance(bool minimum) const
  */
 double Link::getRangeVariance() const
 {
-	UASSERT(self.type == Link::kRangeMeasurement);
+	UASSERT(type_ == Link::kRangeMeasurement);
 	UASSERT(infMatrix_.type() == CV_64FC1);
-	double val = infMatrix.at<double>(0,0);
+	double val = infMatrix_.at<double>(0,0);
 	UASSERT(val > 0);
 	return 1.0/val;
 }
