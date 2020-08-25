@@ -49,6 +49,8 @@ std::string Link::typeName(Type type)
 		return "VirtualClosure";
 	if(type == Link::kNeighborMerged)
 		return "NeighborMerged";
+	if(type == Link::kRangeMeasurement)
+		return "RangeMeasurement";
 	if(type == Link::kPosePrior)
 		return "PosePrior";
 	if(type == Link::kLandmark)
@@ -76,7 +78,17 @@ Link::Link(int from,
 	transform_(transform),
 	type_(type)
 {
-	setInfMatrix(infMatrix);
+
+	// Checks for range measurements. If range measurements then formatting of
+	// info matrix needs to be different
+	if(type_ == Link::kRangeMeasurement){
+		setRangeInfMatrix(infMatrix);
+	}
+	else
+	{
+		setInfMatrix(infMatrix);
+	}
+
 
 	if(userData.type() == CV_8UC1) // Bytes
 	{
@@ -130,7 +142,30 @@ double Link::transVariance(bool minimum) const
 	UASSERT(value > 0.0);
 	return 1.0/value;
 }
+/**
+ * @brief returns the variance of a potential range measurement
+ *
+ * @return double (the variance of the corresponding range measurement)
+ */
+double Link::getRangeVariance() const
+{
+	UASSERT(self.type == Link::kRangeMeasurement);
+	UASSERT(infMatrix_.type() == CV_64FC1);
+	double val = infMatrix.at<double>(0,0);
+	UASSERT(val > 0);
+	return 1.0/val;
+}
 
+/**
+ * @brief sets the 1x1 information matrix for a range measurement
+ *
+ * @param infMatrix (the information matrix for the range measurement)
+ */
+void Link::setRangeInfMatrix(const cv::Mat & infMatrix){
+	UASSERT(infMatrix.cols == 1 && infMatrix.rows == 1 && infMatrix.type() == CV_64FC1);
+	UASSERT_MSG(uIsFinite(infMatrix.at<double>(0,0)) && infMatrix.at<double>(0,0)>0, uFormat("Range measurement variance should not be null! Value=%f (set to 1 if unknown or <=1/9999 to be ignored in some computations).", infMatrix.at<double>(0,0)).c_str());
+	infMatrix_ = infMatrix;
+}
 void Link::setInfMatrix(const cv::Mat & infMatrix) {
 	UASSERT(infMatrix.cols == 6 && infMatrix.rows == 6 && infMatrix.type() == CV_64FC1);
 	UASSERT_MSG(uIsFinite(infMatrix.at<double>(0,0)) && infMatrix.at<double>(0,0)>0, uFormat("Linear information X should not be null! Value=%f (set to 1 if unknown or <=1/9999 to be ignored in some computations).", infMatrix.at<double>(0,0)).c_str());
