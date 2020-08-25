@@ -27,9 +27,9 @@ This project is supported by [IntRoLab - Intelligent / Interactive / Integrated 
 
 ### TODO
 
-- [] Retrieve robot ID and #robots in the launch file
-- [] Read range measurements
-- [] Add range measurements to the factor graph 
-- [] Implement place recognition from all received keyframes
-- [] Upgrade to CMake 3
+- [ ] Retrieve robot ID and #robots in the launch file
+- [ ] Read range measurements
+- [ ] Add range measurements to the factor graph 
+- [ ] Implement place recognition from all received keyframes
+- [ ] Upgrade to CMake 3
 </a>
