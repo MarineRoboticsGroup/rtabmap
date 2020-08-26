@@ -219,6 +219,7 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 			int id1 = iter->second.from();
 			int id2 = iter->second.to();
 			UASSERT(!iter->second.transform().isNull());
+			//* factor only connects to one variable
 			if(id1 == id2)
 			{
 				if(iter->second.type() == Link::kPosePrior && !priorsIgnored())
@@ -291,11 +292,12 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 					graph.add(Pose3GravityFactor(iter->first, nG, model, Unit3(0,0,1)));
 				}
 			}
+			//* factor is relationship between pose and landmark
 			else if(id1<0 || id2 < 0)
 			{
 				if(!landmarksIgnored())
 				{
-					//landmarks
+					// assert that relationship is between pose and landmark
 					UASSERT((id1 < 0 && id2 > 0) || (id1 > 0 && id2 < 0));
 					Transform t;
 					if(id2 < 0)
@@ -377,9 +379,12 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 					}
 				}
 			}
+			//* factor relates two separate poses
 			else // id1 != id2
 			{
 #ifdef RTABMAP_VERTIGO
+				// if vertigo is found and we are using 'robust' mode
+				// add a switch variable corresponding to this Link
 				if(this->isRobust() &&
 				   iter->second.type() != Link::kNeighbor &&
 				   iter->second.type() != Link::kNeighborMerged)
@@ -427,8 +432,8 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 						// create switchable edge factor
 						graph.add(vertigo::BetweenFactorSwitchableLinear<gtsam::Pose2>(id1, id2, gtsam::Symbol('s', switchCounter++), gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
 					}
-					else
 #endif
+					else
 					{
 						graph.add(gtsam::BetweenFactor<gtsam::Pose2>(id1, id2, gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
 					}
@@ -456,8 +461,8 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 						// create switchable edge factor
 						graph.add(vertigo::BetweenFactorSwitchableLinear<gtsam::Pose3>(id1, id2, gtsam::Symbol('s', switchCounter++), gtsam::Pose3(iter->second.transform().toEigen4d()), model));
 					}
-					else
 #endif
+					else
 					{
 						graph.add(gtsam::BetweenFactor<gtsam::Pose3>(id1, id2, gtsam::Pose3(iter->second.transform().toEigen4d()), model));
 					}
