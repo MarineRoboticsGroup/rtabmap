@@ -526,6 +526,11 @@ void RtabmapThread::process()
 	{
 		if(_rtabmap->getMemory())
 		{
+			if (data.info().keyFrameAdded)
+			{
+				_rtabmap->UpdateNCommunicateKF(data.info().words);
+			}
+
 			bool wasPlanning = _rtabmap->getPath().size()>0;
 			if(_rtabmap->process(data.data(), data.pose(), data.covariance(), data.velocity()))
 			{
@@ -540,7 +545,7 @@ void RtabmapThread::process()
 					this->post(new RtabmapGoalStatusEvent(_rtabmap->getPathStatus()));
 				}
 			}
-			_rtabmap->communicateKF(&data.info());
+			
 		}
 		else
 		{
