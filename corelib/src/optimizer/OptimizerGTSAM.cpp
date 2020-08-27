@@ -54,6 +54,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "gtsam/GPSPose2XYFactor.h"
 #include "gtsam/GPSPose3XYZFactor.h"
 
+typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Pose2> RobotRangeFactor2D;
+typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Pose3> RobotRangeFactor3D;
+typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Point2> LandmarkRobotRangeFactor2D;
+typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Point3> LandmarkRobotRangeFactor3D;
+typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Pose2> RobotRangeFactorWithTransform2D;
+typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Pose3> RobotRangeFactorWithTransform3D;
+typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Point2> LandmarkRangeFactorWithTransform2D;
+typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Point3> LandmarkRangeFactorWithTransform3D;
+
 #ifdef RTABMAP_VERTIGO
 #include "vertigo/gtsam/betweenFactorMaxMix.h"
 #include "vertigo/gtsam/betweenFactorSwitchable.h"
@@ -383,11 +392,13 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 			else // id1 != id2
 			{
 #ifdef RTABMAP_VERTIGO
-				// if vertigo is found and we are using 'robust' mode
-				// add a switch variable corresponding to this Link
+				// if vertigo==Found and in robust mode and not an odometry edge
+				// and not a range measurement build a switch variable
+				// corresponding to this Link
 				if(this->isRobust() &&
 				   iter->second.type() != Link::kNeighbor &&
-				   iter->second.type() != Link::kNeighborMerged)
+				   iter->second.type() != Link::kNeighborMerged &&
+				   iter->second.type() != Link::kRangeMeasurement)
 				{
 					// create new switch variable
 					// Sunderhauf IROS 2012:
@@ -397,47 +408,68 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 					double prior = 1.0;
 					initialEstimate.insert(gtsam::Symbol('s',switchCounter), vertigo::SwitchVariableLinear(prior));
 
-					// create switch prior factor
-					// "If the front-end is not able to assign sound individual values
-					//  for Ξij , it is save to set all Ξij = 1, since this value is close
-					//  to the individual optimal choice of Ξij for a large range of
-					//  outliers."
+					// create switch prior factor "If the front-end is not able
+					// to assign sound individual values for Ξij , it is save to
+					// set all Ξij = 1, since this value is close to the
+					// individual optimal choice of Ξij for a large range of
+					// outliers."
 					gtsam::noiseModel::Diagonal::shared_ptr switchPriorModel = gtsam::noiseModel::Diagonal::Sigmas(gtsam::Vector1(1.0));
 					graph.add(gtsam::PriorFactor<vertigo::SwitchVariableLinear> (gtsam::Symbol('s',switchCounter), vertigo::SwitchVariableLinear(prior), switchPriorModel));
 				}
 #endif
 
+				//* if factor is between 2 poses and we're performing 2D SLAM
 				if(isSlam2d())
 				{
-					Eigen::Matrix<double, 3, 3> information = Eigen::Matrix<double, 3, 3>::Identity();
-					if(!isCovarianceIgnored())
-					{
-						information(0,0) = iter->second.infMatrix().at<double>(0,0); // x-x
-						information(0,1) = iter->second.infMatrix().at<double>(0,1); // x-y
-						information(0,2) = iter->second.infMatrix().at<double>(0,5); // x-theta
-						information(1,0) = iter->second.infMatrix().at<double>(1,0); // y-x
-						information(1,1) = iter->second.infMatrix().at<double>(1,1); // y-y
-						information(1,2) = iter->second.infMatrix().at<double>(1,5); // y-theta
-						information(2,0) = iter->second.infMatrix().at<double>(5,0); // theta-x
-						information(2,1) = iter->second.infMatrix().at<double>(5,1); // theta-y
-						information(2,2) = iter->second.infMatrix().at<double>(5,5); // theta-theta
+					// if is range factor
+					// TODO finish integrating range factor
+					if(iter->second.type() == Link::kRangeMeasurement){
+						double rangeVariance = iter->second.getRangeVariance();
+						auto noiseModel = gtsam::noiseModel::Isotropic::Variance(1, rangeVariance)
+						double dist = iter->second.get
+						RobotRangeFactor2D(id1, id2, , noiseModel)
+
+						typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Pose2> RobotRangeFactor2D;
 					}
-					gtsam::noiseModel::Gaussian::shared_ptr model = gtsam::noiseModel::Gaussian::Information(information);
+					else{
+						Eigen::Matrix<double, 3, 3> information = Eigen::Matrix<double, 3, 3>::Identity();
+						if(!isCovarianceIgnored())
+						{
+							information(0,0) = iter->second.infMatrix().at<double>(0,0); // x-x
+							information(0,1) = iter->second.infMatrix().at<double>(0,1); // x-y
+							information(0,2) = iter->second.infMatrix().at<double>(0,5); // x-theta
+							information(1,0) = iter->second.infMatrix().at<double>(1,0); // y-x
+							information(1,1) = iter->second.infMatrix().at<double>(1,1); // y-y
+							information(1,2) = iter->second.infMatrix().at<double>(1,5); // y-theta
+							information(2,0) = iter->second.infMatrix().at<double>(5,0); // theta-x
+							information(2,1) = iter->second.infMatrix().at<double>(5,1); // theta-y
+							information(2,2) = iter->second.infMatrix().at<double>(5,5); // theta-theta
+						}
+						gtsam::noiseModel::Gaussian::shared_ptr model = gtsam::noiseModel::Gaussian::Information(information);
 
 #ifdef RTABMAP_VERTIGO
-					if(this->isRobust() &&
-					   iter->second.type()!=Link::kNeighbor &&
-					   iter->second.type() != Link::kNeighborMerged)
-					{
-						// create switchable edge factor
-						graph.add(vertigo::BetweenFactorSwitchableLinear<gtsam::Pose2>(id1, id2, gtsam::Symbol('s', switchCounter++), gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
-					}
+						// if we're doing robust SLAM and this is a loop closure
+						// then add it as a switchable constraint
+						// TODO make sure it ignores range measurements
+						if(this->isRobust() &&
+						iter->second.type()!=Link::kNeighbor &&
+						iter->second.type() != Link::kNeighborMerged)
+						{
+							// create switchable edge factor
+							graph.add(vertigo::BetweenFactorSwitchableLinear<gtsam::Pose2>(id1, id2, gtsam::Symbol('s', switchCounter++), gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
+						}
+						else
 #endif
-					else
-					{
-						graph.add(gtsam::BetweenFactor<gtsam::Pose2>(id1, id2, gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
+						// if not doing robust slam or this is not a loop closure
+						// add this as a normal between factor constraint
+						// TODO figure out what needs to be done here
+						{
+							graph.add(gtsam::BetweenFactor<gtsam::Pose2>(id1, id2, gtsam::Pose2(iter->second.transform().x(), iter->second.transform().y(), iter->second.transform().theta()), model));
+						}
 					}
 				}
+				//* is factor between 2 poses and performing 3D SLAM
+				// TODO do something about integrating range factors here
 				else
 				{
 					Eigen::Matrix<double, 6, 6> information = Eigen::Matrix<double, 6, 6>::Identity();
@@ -461,8 +493,8 @@ std::map<int, Transform> OptimizerGTSAM::optimize(
 						// create switchable edge factor
 						graph.add(vertigo::BetweenFactorSwitchableLinear<gtsam::Pose3>(id1, id2, gtsam::Symbol('s', switchCounter++), gtsam::Pose3(iter->second.transform().toEigen4d()), model));
 					}
-#endif
 					else
+#endif
 					{
 						graph.add(gtsam::BetweenFactor<gtsam::Pose3>(id1, id2, gtsam::Pose3(iter->second.transform().toEigen4d()), model));
 					}
