@@ -2,10 +2,10 @@ rtabmap ![Analytics](https://ga-beacon.appspot.com/UA-56986679-3/github-main?pix
 =======
 
 [![RTAB-Map Logo](https://raw.githubusercontent.com/introlab/rtabmap/master/guilib/src/images/RTAB-Map100.png)](http://introlab.github.io/rtabmap)
+[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Ffeat%252Fkeyframe_communication)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/feat%252Fkeyframe_communication/)
 
 [![Release][release-image]][releases]
 [![License][license-image]][license]
-Linux: [![Build Status](https://travis-ci.org/introlab/rtabmap.svg?branch=master)](https://travis-ci.org/introlab/rtabmap) Windows: [![Build status](https://ci.appveyor.com/api/projects/status/hr73xspix9oqa26h/branch/master?svg=true)](https://ci.appveyor.com/project/matlabbe/rtabmap/branch/master)
 
 [release-image]: https://img.shields.io/badge/release-0.18.0-green.svg?style=flat
 [releases]: https://github.com/introlab/rtabmap/releases
