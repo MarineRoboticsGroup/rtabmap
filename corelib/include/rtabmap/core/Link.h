@@ -46,6 +46,7 @@ public:
 		kUserClosure,
 		kVirtualClosure,
 		kNeighborMerged,
+		kRangeMeasurement, // Range Factor
 		kPosePrior, // Absolute pose in /world frame, From == To
 		kLandmark,  // Transform /base_link -­­> /landmark, "From" is node observing the landmark "To" (landmark is negative id)
 		kGravity,  // Orientation of the base frame accordingly to gravity (From == To)
@@ -74,11 +75,13 @@ public:
 	const cv::Mat & infMatrix() const {return infMatrix_;}
 	double rotVariance(bool minimum = true) const;
 	double transVariance(bool minimum = true) const;
+	double getRangeVariance() const;
 
 	void setFrom(int from) {from_ = from;}
 	void setTo(int to) {to_ = to;}
 	void setTransform(const Transform & transform) {transform_ = transform;}
 	void setType(Type type) {type_ = type;}
+
 
 	const cv::Mat & userDataRaw() const {return _userDataRaw;}
 	const cv::Mat & userDataCompressed() const {return _userDataCompressed;}
@@ -89,6 +92,7 @@ public:
 	Link inverse() const;
 
 private:
+	void setRangeInfMatrix(const cv::Mat & infMatrix);
 	void setInfMatrix(const cv::Mat & infMatrix);
 
 private:
