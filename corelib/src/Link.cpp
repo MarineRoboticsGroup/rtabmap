@@ -198,14 +198,13 @@ void Link::setInfMatrix(const cv::Mat & infMatrix) {
 	infMatrix_ = infMatrix;
 }
 
-
-const Transform & transform() const {
-	UASSERT(!(type_ == Link::kRangeMeasurement))
+const Transform & Link::transform() const {
+	UASSERT(!(type_ == Link::kRangeMeasurement));
 	return transform_;
 }
 
-const float distMeasured() const {
-	UASSERT(type_ == Link::kRangeMeasurement)
+const float Link::distMeasured() const {
+	UASSERT(type_ == Link::kRangeMeasurement);
 	return distMeasured_;
 }
 
