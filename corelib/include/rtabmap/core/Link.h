@@ -76,7 +76,8 @@ public:
 
 	int from() const {return from_;}
 	int to() const {return to_;}
-	const Transform & transform() const {return transform_;}
+	const Transform & transform() const;
+	const float distMeasured() const;
 	Type type() const {return type_;}
 	std::string typeName() const {return typeName(type_);}
 	const cv::Mat & infMatrix() const {return infMatrix_;}
@@ -105,6 +106,7 @@ private:
 private:
 	int from_;
 	int to_;
+	float distMeasured_;
 	Transform transform_;
 	Type type_;
 	cv::Mat infMatrix_; // Information matrix = covariance matrix ^ -1
