@@ -58,8 +58,7 @@ public:
 		memoryUsage(0),
 		gravityRollError(0.0),
 		gravityPitchError(0.0),
-		type(0),
-		curLocalKFId(0)
+		type(0)
 	{}
 
 	OdometryInfo copyWithoutData() const
@@ -90,9 +89,6 @@ public:
 		output.gravityRollError = gravityRollError;
 		output.gravityPitchError = gravityPitchError;
 		output.type = type;
-		output.curLocalKFId = curLocalKFId;
-		output.allQueuedKF = allQueuedKF;
-		output.allLocalDescriptors = allLocalDescriptors;
 		return output;
 	}
 
@@ -133,10 +129,7 @@ public:
 	std::vector<cv::Point2f> newCorners;
 	std::vector<int> cornerInliers;
 
-	//multi-robot
-	int curLocalKFId;
-	std::vector<std::set<int>> allQueuedKF;
-	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors;
+	
 };
 
 }

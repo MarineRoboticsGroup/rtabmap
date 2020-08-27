@@ -5663,19 +5663,20 @@ void Rtabmap::updateGoalIndex()
 		}
 	}
 }
-void Rtabmap::communicateKF(const OdometryInfo * info)
+void Rtabmap::UpdateNCommunicateKF(const std::multimap<int, cv::KeyPoint>& words)
 {
+	_memory->updateKFQueues(words);
+
 	//===========================================================
 	// Multi-robot stuff --- Temporary code 
 	// In the future, will be directly triggered by a range measurement
 	//===========================================================
-	int oRobot = 2;//(myId + 1)%4;
-	this->info = info; 
-	std::set<int> selectedKF = selectKeyframesToSend(oRobot, info->allQueuedKF);
+	int oRobot = (_memory->getMyId()+1)%_memory->getNbRobots();
+	std::set<int> selectedKF = selectKeyframesToSend(oRobot);
 	bufferCommunicationKF = std::make_pair(oRobot, selectedKF);
 }
 
-std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId, const std::vector<std::set<int>> &allQueuedKF)
+std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId)
 {
 	// Later there could be some processing going on there before sending the keyframes
 	//For example filter out keyframes far away
@@ -5688,16 +5689,6 @@ void Rtabmap::cleanBroadcastedKF()
 	int oRobotId = bufferCommunicationKF.first;
 	std::set<int>& selectedKF = bufferCommunicationKF.second;
 
-	for (auto it = info->allQueuedKF.at(oRobotId).begin(); it!= info->allQueuedKF.at(oRobotId).end();)
-	{
-		if (selectedKF.find(*it) == selectedKF.end())
-		{
-			++it;
-		}
-		else
-		{
-			it = allQueuedKF.at(oRobotId).erase(it);
-		}
-	}
+	_memory->cleanTransmittedKF(oRobotId, selectedKF);
 }
 } // namespace rtabmap

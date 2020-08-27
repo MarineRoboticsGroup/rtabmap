@@ -121,6 +121,9 @@ Memory::Memory(const ParametersMap & parameters) :
 	_linksChanged(false),
 	_signaturesAdded(0),
 	_allNodesInWM(true),
+	_my_id(0),
+	_nb_robots(4),
+	curLocalKFId(0),
 
 	_badSignRatio(Parameters::defaultKpBadSignRatio()),
 	_tfIdfLikelihoodUsed(Parameters::defaultKpTfIdfLikelihoodUsed()),
@@ -209,6 +212,11 @@ bool Memory::init(const std::string & dbUrl, bool dbOverwritten, const Parameter
 	loadDataFromDb(postInitClosingEvents);
 
 	if(postInitClosingEvents) UEventsManager::post(new RtabmapEventInit(RtabmapEventInit::kInitialized));
+	// Initialization multi-robot stuff
+	allQueuedKF = std::vector<std::set<int>>();
+	
+	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
+		allQueuedKF.push_back(std::set<int>());
 
 	return success;
 }
@@ -5540,4 +5548,34 @@ void Memory::getMetricConstraints(
 	}
 }
 
+void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
+{
+	//Update memory
+	allLocalDescriptors.insert({curLocalKFId, words});
+
+	for (unsigned int iRobot = 0 ; iRobot < _nb_robots; ++iRobot)
+	{
+		allQueuedKF.at(iRobot).insert(curLocalKFId);
+	}
+
+	++curLocalKFId;
+}
+/**
+ * Removes transmitted keyframes' ids from the queue
+ * of the corresponding robot
+**/
+void Memory::cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF)
+{
+	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
+	{
+		if (selectedKF.find(*it) == selectedKF.end())
+		{
+			++it;
+		}
+		else
+		{
+			it = allQueuedKF.at(oRobotId).erase(it);
+		}
+	}
+}
 } // namespace rtabmap

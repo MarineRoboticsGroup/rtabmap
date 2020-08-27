@@ -220,7 +220,9 @@ public:
 	bool isGraphReduced() const {return _reduceGraph;}
 	const std::vector<double> & getOdomMaxInf() const {return _odomMaxInf;}
 	bool isOdomGravityUsed() const {return _useOdometryGravity;}
-
+	int getNbRobots() const {return _nb_robots;}
+	int getMyId() const {return _my_id;}
+	std::map<int, std::multimap<int, cv::KeyPoint>> getAllDescriptorsKF() const { return allLocalDescriptors;};
 	void dumpMemoryTree(const char * fileNameTree) const;
 	virtual void dumpMemory(std::string directory) const;
 	virtual void dumpSignatures(const char * fileNameSign, bool words3D) const;
@@ -246,6 +248,8 @@ public:
 			int oldId,
 			const std::map<int, Transform> & poses,
 			RegistrationInfo * info = 0);
+	void updateKFQueues(const std::multimap<int, cv::KeyPoint>& words);
+	void cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF);
 
 private:
 	void preUpdate();
@@ -325,9 +329,16 @@ private:
 	bool _detectMarkers;
 	float _markerLinVariance;
 	float _markerAngVariance;
-
+	int _my_id;
+	int _nb_robots;
 	int _idCount;
 	int _idMapCount;
+	
+	//multi-robot
+	int curLocalKFId;
+	std::vector<std::set<int>> allQueuedKF;
+	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors;
+
 	Signature * _lastSignature;
 	int _lastGlobalLoopClosureId;
 	bool _memoryChanged; // False by default, become true only when Memory::update() is called.
