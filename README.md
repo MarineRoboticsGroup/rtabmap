@@ -5,7 +5,7 @@ rtabmap ![Analytics](https://ga-beacon.appspot.com/UA-56986679-3/github-main?pix
 
 [![Release][release-image]][releases]
 [![License][license-image]][license]
-Linux: [![Build Status](https://travis-ci.org/introlab/rtabmap.svg?branch=master)](https://travis-ci.org/introlab/rtabmap) Windows: [![Build status](https://ci.appveyor.com/api/projects/status/hr73xspix9oqa26h/branch/master?svg=true)](https://ci.appveyor.com/project/matlabbe/rtabmap/branch/master)
+[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Ffeat%252Frange_factor_gtsam_optimizer)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/feat%252Frange_factor_gtsam_optimizer/)
 
 [release-image]: https://img.shields.io/badge/release-0.18.0-green.svg?style=flat
 [releases]: https://github.com/introlab/rtabmap/releases
