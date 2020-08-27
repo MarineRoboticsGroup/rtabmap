@@ -98,7 +98,6 @@ private:
 private:
 	int from_;
 	int to_;
-	float rangeUncertainty_;
 	Transform transform_;
 	Type type_;
 	cv::Mat infMatrix_; // Information matrix = covariance matrix ^ -1
