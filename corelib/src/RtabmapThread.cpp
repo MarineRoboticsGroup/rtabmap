@@ -303,7 +303,6 @@ void RtabmapThread::mainLoop()
 	}
 }
 
-
 bool RtabmapThread::handleEvent(UEvent* event)
 {
 	if(this->isRunning())
