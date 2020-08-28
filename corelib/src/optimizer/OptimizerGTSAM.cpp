@@ -64,15 +64,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace rtabmap
 {
-	typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Pose2> RobotRangeFactor2D;
-	typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Pose3> RobotRangeFactor3D;
-	typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Point2> LandmarkRangeFactor2D;
-	typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Point3> LandmarkRangeFactor3D;
-	typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Pose2> RobotRangeFactorWithTransform2D;
-	typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Pose3> RobotRangeFactorWithTransform3D;
-	typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Point2> LandmarkRangeFactorWithTransform2D;
-	typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Point3> LandmarkRangeFactorWithTransform3D;
-
 	bool OptimizerGTSAM::available()
 	{
 #ifdef RTABMAP_GTSAM
