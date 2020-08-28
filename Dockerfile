@@ -1,5 +1,3 @@
-# FROM mitmrg/gtsam-opencv-pcl:latest
-# Possibly useful unsure
 FROM ros:melodic-perception
 
 USER root
