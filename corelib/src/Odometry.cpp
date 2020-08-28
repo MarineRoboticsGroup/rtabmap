@@ -550,6 +550,17 @@ Transform Odometry::process(SensorData & data, const Transform & guessIn, Odomet
 			}
 			previousGroundTruthPose_ = data.groundTruth();
 		}
+
+		if (info->keyFrameAdded){
+			info->allLocalDescriptors.insert({info->curLocalKFId, info->words});
+
+			for (unsigned int iRobot = 0 ; iRobot < info->allQueuedKF.size(); ++iRobot)
+			{
+				info->allQueuedKF.at(iRobot).insert(info->curLocalKFId);
+			}
+
+			++info->curLocalKFId;
+		}
 	}
 
 	if(!t.isNull())

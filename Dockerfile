@@ -25,4 +25,4 @@ RUN cd ~ && \
     cmake -DGTSAM_USE_SYSTEM_EIGEN=ON -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_BUILD_UNSTABLE=ON .. && \
     make check -j4 && \
     make install -j4
-
+    
