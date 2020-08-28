@@ -5,7 +5,7 @@ rtabmap ![Analytics](https://ga-beacon.appspot.com/UA-56986679-3/github-main?pix
 
 [![Release][release-image]][releases]
 [![License][license-image]][license]
-[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Ffeat%252Frange_factor_gtsam_optimizer)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/feat%252Frange_factor_gtsam_optimizer/)
+[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Fmaster)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/master/)
 
 [release-image]: https://img.shields.io/badge/release-0.18.0-green.svg?style=flat
 [releases]: https://github.com/introlab/rtabmap/releases
