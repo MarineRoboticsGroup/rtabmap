@@ -333,8 +333,6 @@ private:
 	
 	//Multi-robot stuff
 	std::pair<int, std::set<int>> bufferCommunicationKF;
-	std::vector<std::set<int>> allQueuedKF;
-	std::map<int, std::multimap<int, cv::KeyPoint>> localDescriptorsKF_;
 	const OdometryInfo * info;
 };
 

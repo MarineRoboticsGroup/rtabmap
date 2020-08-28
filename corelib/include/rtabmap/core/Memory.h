@@ -222,6 +222,7 @@ public:
 	bool isOdomGravityUsed() const {return _useOdometryGravity;}
 	int getNbRobots() const {return _nb_robots;}
 	int getMyId() const {return _my_id;}
+	std::vector<std::set<int>> getAllQueuedKF() const{return allQueuedKF;}
 	std::map<int, std::multimap<int, cv::KeyPoint>> getAllDescriptorsKF() const { return allLocalDescriptors;};
 	void dumpMemoryTree(const char * fileNameTree) const;
 	virtual void dumpMemory(std::string directory) const;
