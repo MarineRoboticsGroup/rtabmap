@@ -148,7 +148,14 @@ Memory::Memory(const ParametersMap & parameters) :
 
 	_occupancy = new OccupancyGrid(parameters);
 	_markerDetector = new MarkerDetector(parameters);
+
 	this->parseParameters(parameters);
+
+	// Initialization multi-robot stuff
+	allLocalDescriptors = std::map<int, std::multimap<int, cv::KeyPoint>>();
+	allQueuedKF = std::vector<std::set<int>>(_nb_robots);
+	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
+		allQueuedKF.at(iRobot) = std::set<int>();
 }
 
 bool Memory::init(const std::string & dbUrl, bool dbOverwritten, const ParametersMap & parameters, bool postInitClosingEvents)
@@ -212,11 +219,6 @@ bool Memory::init(const std::string & dbUrl, bool dbOverwritten, const Parameter
 	loadDataFromDb(postInitClosingEvents);
 
 	if(postInitClosingEvents) UEventsManager::post(new RtabmapEventInit(RtabmapEventInit::kInitialized));
-	// Initialization multi-robot stuff
-	allQueuedKF = std::vector<std::set<int>>();
-	
-	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
-		allQueuedKF.push_back(std::set<int>());
 
 	return success;
 }
@@ -585,6 +587,8 @@ void Memory::parseParameters(const ParametersMap & parameters)
 	Parameters::parse(params, Parameters::kMarkerVarianceLinear(), _markerLinVariance);
 	Parameters::parse(params, Parameters::kMarkerVarianceAngular(), _markerAngVariance);
 	Parameters::parse(params, Parameters::kMemLocalizationDataSaved(), _localizationDataSaved);
+	Parameters::parse(params, Parameters::kRtabmapNbRobots(), _nb_robots);
+	Parameters::parse(params, Parameters::kRtabmapMyId(), _my_id);
 
 	UASSERT_MSG(_maxStMemSize >= 0, uFormat("value=%d", _maxStMemSize).c_str());
 	UASSERT_MSG(_similarityThreshold >= 0.0f && _similarityThreshold <= 1.0f, uFormat("value=%f", _similarityThreshold).c_str());
@@ -5566,6 +5570,7 @@ void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
 **/
 void Memory::cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF)
 {
+
 	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
 	{
 		if (selectedKF.find(*it) == selectedKF.end())
