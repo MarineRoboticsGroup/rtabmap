@@ -36,20 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <rtabmap/core/optimizer/OptimizerGTSAM.h>
 
 #ifdef RTABMAP_GTSAM
-#include <gtsam/geometry/Pose2.h>
-#include <gtsam/geometry/Pose3.h>
-#include <gtsam/inference/Key.h>
-#include <gtsam/inference/Symbol.h>
-#include <gtsam/slam/PriorFactor.h>
-#include <gtsam/slam/BetweenFactor.h>
-#include <gtsam/sam/BearingRangeFactor.h>
-#include <gtsam/nonlinear/NonlinearFactorGraph.h>
-#include <gtsam/nonlinear/GaussNewtonOptimizer.h>
-#include <gtsam/nonlinear/DoglegOptimizer.h>
-#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
-#include <gtsam/nonlinear/NonlinearOptimizer.h>
-#include <gtsam/nonlinear/Marginals.h>
-#include <gtsam/nonlinear/Values.h>
 #include "gtsam/GravityFactor.h"
 #include "gtsam/GPSPose2XYFactor.h"
 #include "gtsam/GPSPose3XYZFactor.h"
@@ -61,6 +47,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vertigo/gtsam/switchVariableSigmoid.h"
 #endif
 #endif // end RTABMAP_GTSAM
+
+
 
 namespace rtabmap
 {
@@ -312,11 +300,12 @@ namespace rtabmap
 
 							if(isSlam2d()){
 								LandmarkRangeFactor2D rangeFactor(id1, id2, rangeDist, noiseModel);
+								graph.add(rangeFactor);
 							}
 							else{
 								LandmarkRangeFactor3D rangeFactor(id1, id2, rangeDist, noiseModel);
+								graph.add(rangeFactor);
 							}
-							graph.add(rangeFactor);
 						}
 						// normal fully constrained measurement
 						else
