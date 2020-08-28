@@ -46,6 +46,7 @@ public:
 		kUserClosure,
 		kVirtualClosure,
 		kNeighborMerged,
+		kRangeMeasurement, // Range Factor
 		kPosePrior, // Absolute pose in /world frame, From == To
 		kLandmark,  // Transform /base_link -­­> /landmark, "From" is node observing the landmark "To" (landmark is negative id)
 		kGravity,  // Orientation of the base frame accordingly to gravity (From == To)
@@ -63,22 +64,32 @@ public:
 			const Transform & transform,
 			const cv::Mat & infMatrix = cv::Mat::eye(6,6,CV_64FC1), // information matrix: inverse of covariance matrix
 			const cv::Mat & userData = cv::Mat());
+	Link(int from,
+			int to,
+			Type type,
+			double distMeasured,
+			const cv::Mat & infMatrix = cv::Mat::eye(1,1,CV_64FC1), // information matrix: inverse of covariance matrix
+			const cv::Mat & userData = cv::Mat());
+
 
 	bool isValid() const {return from_ != 0 && to_ != 0 && !transform_.isNull() && type_!=kUndef;}
 
 	int from() const {return from_;}
 	int to() const {return to_;}
-	const Transform & transform() const {return transform_;}
+	const Transform & transform() const;
+	const float distMeasured() const;
 	Type type() const {return type_;}
 	std::string typeName() const {return typeName(type_);}
 	const cv::Mat & infMatrix() const {return infMatrix_;}
 	double rotVariance(bool minimum = true) const;
 	double transVariance(bool minimum = true) const;
+	double getRangeVariance() const;
 
 	void setFrom(int from) {from_ = from;}
 	void setTo(int to) {to_ = to;}
 	void setTransform(const Transform & transform) {transform_ = transform;}
 	void setType(Type type) {type_ = type;}
+
 
 	const cv::Mat & userDataRaw() const {return _userDataRaw;}
 	const cv::Mat & userDataCompressed() const {return _userDataCompressed;}
@@ -89,11 +100,13 @@ public:
 	Link inverse() const;
 
 private:
+	void setRangeInfMatrix(const cv::Mat & infMatrix);
 	void setInfMatrix(const cv::Mat & infMatrix);
 
 private:
 	int from_;
 	int to_;
+	float distMeasured_;
 	Transform transform_;
 	Type type_;
 	cv::Mat infMatrix_; // Information matrix = covariance matrix ^ -1

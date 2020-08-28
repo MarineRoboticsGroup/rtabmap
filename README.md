@@ -1,13 +1,14 @@
-rtabmap ![Analytics](https://ga-beacon.appspot.com/UA-56986679-3/github-main?pixel) 
+rtabmap
 =======
 
-[![RTAB-Map Logo](https://raw.githubusercontent.com/introlab/rtabmap/master/guilib/src/images/RTAB-Map100.png)](http://introlab.github.io/rtabmap)
-[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Ffeat%252Fkeyframe_communication)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/feat%252Fkeyframe_communication/)
+[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Fmaster)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/master/)
+
 
 [![Release][release-image]][releases]
 [![License][license-image]][license]
+[![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Fmaster)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/master/)
 
-[release-image]: https://img.shields.io/badge/release-0.18.0-green.svg?style=flat
+[release-image]: https://img.shields.io/badge/release-0.20.0-green.svg?style=flat
 [releases]: https://github.com/introlab/rtabmap/releases
 
 [license-image]: https://img.shields.io/badge/license-BSD-green.svg?style=flat
@@ -24,4 +25,12 @@ This project is supported by [IntRoLab - Intelligent / Interactive / Integrated 
 
 <a href="https://introlab.3it.usherbrooke.ca/">
 <img src="https://github.com/introlab/16SoundsUSB/blob/master/images/IntRoLab.png" alt="IntRoLab" height="100">
+
+### TODO
+
+- [ ] Retrieve robot ID and #robots in the launch file
+- [ ] Read range measurements
+- [ ] Add range measurements to the factor graph 
+- [ ] Implement place recognition from all received keyframes
+- [ ] Upgrade to CMake 3
 </a>

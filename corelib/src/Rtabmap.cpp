@@ -16,7 +16,7 @@ modification, are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+disclaimed. in no event shall the copyright holder or contributors be liable for any
 DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -1523,12 +1523,15 @@ bool Rtabmap::process(
 	// Bayes filter update
 	//============================================================
 	int previousId = signature->getLinks().size() && signature->getLinks().begin()->first!=signature->id()?signature->getLinks().begin()->first:0;
-	// Not a bad signature, not an intermediate node, not a small displacement unless the previous signature didn't have a loop closure, not too fast movement
+	// Not a bad signature, not an intermediate node, not a small displacement
+	// unless the previous signature didn't have a loop closure, not too fast
+	// movement
 	if(!signature->isBadSignature() && signature->getWeight()>=0 && (!smallDisplacement || _memory->getLoopClosureLinks(previousId, false).size() == 0) && !tooFastMovement)
 	{
-		// If the working memory is empty, don't do the detection. It happens when it
-		// is the first time the detector is started (there needs some images to
-		// fill the short-time memory before a signature is added to the working memory).
+		// If the working memory is empty, don't do the detection. This can occur
+		// when the detector is started for the first time (there needs some
+		// images to fill the short-time memory before a signature is
+		// added to the working memory).
 		if(_memory->getWorkingMem().size())
 		{
 			//============================================================
@@ -1676,6 +1679,7 @@ bool Rtabmap::process(
 			//============================================================
 			// Select the highest hypothesis
 			//============================================================
+			//* This looks to be loop closure hypothesis testing
 			ULOGGER_INFO("creating hypotheses...");
 			if(posterior.size())
 			{
@@ -1753,7 +1757,8 @@ bool Rtabmap::process(
 				hypothesisRatio = _loopClosureHypothesis.second>0?_highestHypothesis.second/_loopClosureHypothesis.second:0;
 			}
 		} // if(_memory->getWorkingMemSize())
-	}// !isBadSignature
+	}
+	//* good signature but small displacement or moved too fast
 	else if(!signature->isBadSignature() && (smallDisplacement || tooFastMovement))
 	{
 		_highestHypothesis = lastHighestHypothesis;
@@ -2513,6 +2518,7 @@ bool Rtabmap::process(
 	// Global loop closure detection
 	// (updated: place this after retrieval to be sure that neighbors of the loop closure are in RAM)
 	//=============================================================
+	// TODO make sure this can handle place recognition with images recorded by other robots
 	if(_loopClosureHypothesis.first>0)
 	{
 		//Compute transform if metric data are present
@@ -3274,7 +3280,7 @@ bool Rtabmap::process(
 	}
 
 	// If this option activated, add new nodes only if there are linked with a previous map.
-	// Used when rtabmap is first started, it will wait a
+	// Used when rtabmap is first started, it will wait for a
 	// global loop closure detection before starting the new map,
 	// otherwise it deletes the current node.
 	if(signatureRemoved != lastSignatureData.id())
