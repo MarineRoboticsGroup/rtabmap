@@ -121,8 +121,8 @@ Memory::Memory(const ParametersMap & parameters) :
 	_linksChanged(false),
 	_signaturesAdded(0),
 	_allNodesInWM(true),
-	_my_id(0),
-	_nb_robots(4),
+	_my_id(Parameters::defaultRtabmapNbRobots()),
+	_nb_robots(Parameters::defaultRtabmapMyId()),
 	curLocalKFId(0),
 
 	_badSignRatio(Parameters::defaultKpBadSignRatio()),

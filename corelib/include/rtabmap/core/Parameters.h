@@ -197,6 +197,10 @@ class RTABMAP_EXP Parameters
     RTABMAP_PARAM(Rtabmap, LoopRatio,         float, 0,         "The loop closure hypothesis must be over LoopRatio x lastHypothesisValue.");
     RTABMAP_PARAM(Rtabmap, LoopGPS,           bool,  true,      uFormat("Use GPS to filter likelihood (if GPS is recorded). Only locations inside the local radius \"%s\" of the current GPS location are considered for loop closure detection.", kRGBDLocalRadius().c_str()));
 
+    //Multi-Robot
+    RTABMAP_PARAM(Rtabmap, NbRobots, int, 1, "number of robots"); 
+    RTABMAP_PARAM(Rtabmap, MyId, int, 0, "Current robot's id"); 
+
     // Memory
     RTABMAP_PARAM(Mem, RehearsalSimilarity,         float, 0.6,     "Rehearsal similarity.");
     RTABMAP_PARAM(Mem, ImageKept,                   bool, false,    "Keep raw images in RAM.");
