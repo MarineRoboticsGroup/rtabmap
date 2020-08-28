@@ -1,5 +1,5 @@
 pipeline {
-	agent { 
+	agent {
 		dockerfile {
 			args '-e HOME=$WORKSPACE'
 			additionalBuildArgs '--build-arg USER_ID=$(id -u)'
@@ -13,7 +13,7 @@ pipeline {
           mkdir build
           cd build
           cmake ..
-          make -j4
+          make -j8
 				'''
           // sudo make install
 			}
@@ -31,4 +31,3 @@ pipeline {
 		}
 	}
 }
-

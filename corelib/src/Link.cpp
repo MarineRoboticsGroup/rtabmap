@@ -79,15 +79,36 @@ Link::Link(int from,
 	type_(type)
 {
 
-	// Checks for range measurements. If range measurements then formatting of
-	// info matrix needs to be different
-	if(type_ == Link::kRangeMeasurement){
-		setRangeInfMatrix(infMatrix);
+	// Assert is not a range measurement
+	UASSERT(!(type_ == Link::kRangeMeasurement));
+
+	setInfMatrix(infMatrix);
+
+	if(userData.type() == CV_8UC1) // Bytes
+	{
+		_userDataCompressed = userData; // assume compressed
 	}
 	else
 	{
-		setInfMatrix(infMatrix);
+		_userDataRaw = userData;
 	}
+}
+
+Link::Link(int from,
+			int to,
+			Type type,
+			double distMeasured,
+			const cv::Mat & infMatrix,
+			const cv::Mat & userData) :
+	from_(from),
+	to_(to),
+	distMeasured_(distMeasured),
+	type_(type)
+{
+
+	// Assert must be range measurement
+	UASSERT(type_ == Link::kRangeMeasurement);
+	setRangeInfMatrix(infMatrix);
 
 
 	if(userData.type() == CV_8UC1) // Bytes
@@ -175,6 +196,16 @@ void Link::setInfMatrix(const cv::Mat & infMatrix) {
 	UASSERT_MSG(uIsFinite(infMatrix.at<double>(4,4)) && infMatrix.at<double>(4,4)>0, uFormat("Angular information pitch should not be null! Value=%f (set to 1 if unknown or <=1/9999 to be ignored in some computations).", infMatrix.at<double>(4,4)).c_str());
 	UASSERT_MSG(uIsFinite(infMatrix.at<double>(5,5)) && infMatrix.at<double>(5,5)>0, uFormat("Angular information yaw should not be null! Value=%f (set to 1 if unknown or <=1/9999 to be ignored in some computations).", infMatrix.at<double>(5,5)).c_str());
 	infMatrix_ = infMatrix;
+}
+
+const Transform & Link::transform() const {
+	UASSERT(!(type_ == Link::kRangeMeasurement));
+	return transform_;
+}
+
+const float Link::distMeasured() const {
+	UASSERT(type_ == Link::kRangeMeasurement);
+	return distMeasured_;
 }
 
 void Link::uncompressUserData()

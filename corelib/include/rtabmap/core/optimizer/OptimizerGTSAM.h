@@ -28,6 +28,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef OPTIMIZERGTSAM_H_
 #define OPTIMIZERGTSAM_H_
 
+#ifdef RTABMAP_GTSAM
+#include <gtsam/geometry/Pose2.h>
+#include <gtsam/geometry/Pose3.h>
+#include <gtsam/inference/Key.h>
+#include <gtsam/inference/Symbol.h>
+#include <gtsam/slam/PriorFactor.h>
+#include <gtsam/slam/BetweenFactor.h>
+#include <gtsam/sam/BearingRangeFactor.h>
+#include <gtsam/sam/RangeFactor.h>
+#include <gtsam/nonlinear/NonlinearFactorGraph.h>
+#include <gtsam/nonlinear/GaussNewtonOptimizer.h>
+#include <gtsam/nonlinear/DoglegOptimizer.h>
+#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
+#include <gtsam/nonlinear/NonlinearOptimizer.h>
+#include <gtsam/nonlinear/Marginals.h>
+#include <gtsam/nonlinear/Values.h>
+#endif // end RTABMAP_GTSAM
+
 #include "rtabmap/core/RtabmapExp.h" // DLL export/import defines
 
 #include <rtabmap/core/Optimizer.h>
@@ -63,6 +81,16 @@ public:
 
 private:
 	int optimizer_;
+	typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Pose2> RobotRangeFactor2D;
+	typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Pose3> RobotRangeFactor3D;
+	typedef gtsam::RangeFactor<gtsam::Pose2, gtsam::Point2> LandmarkRangeFactor2D;
+	typedef gtsam::RangeFactor<gtsam::Pose3, gtsam::Point3> LandmarkRangeFactor3D;
+	typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Pose2> RobotRangeFactorWithTransform2D;
+	typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Pose3> RobotRangeFactorWithTransform3D;
+	typedef gtsam::RangeFactorWithTransform<gtsam::Pose2, gtsam::Point2> LandmarkRangeFactorWithTransform2D;
+	typedef gtsam::RangeFactorWithTransform<gtsam::Pose3, gtsam::Point3> LandmarkRangeFactorWithTransform3D;
+
+
 };
 
 } /* namespace rtabmap */
