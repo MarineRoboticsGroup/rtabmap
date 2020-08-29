@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 # FROM mitmrg/gtsam-opencv-pcl:latest
 # Possibly useful unsure
+=======
+
+>>>>>>> 543897b4b9cd9b8700b4dea07d194c964124d358
 FROM ros:melodic-perception
 
 # ENV GIT_SSH_COMMAND 'ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
@@ -35,4 +39,8 @@ RUN cd ~ && \
     cd build && \
     cmake -DGTSAM_USE_SYSTEM_EIGEN=ON -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_BUILD_UNSTABLE=ON .. && \
     make check -j4 && \
+<<<<<<< HEAD
     make install -j4
+=======
+    make install -j4
+>>>>>>> 543897b4b9cd9b8700b4dea07d194c964124d358
