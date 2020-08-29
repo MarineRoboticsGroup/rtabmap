@@ -88,7 +88,6 @@ public:
 
 	void init(const ParametersMap & parameters, const std::string & databasePath = "");
 	void init(const std::string & configFile = "", const std::string & databasePath = "");
-
 	void UpdateNCommunicateKF(const std::multimap<int, cv::KeyPoint>& words);
 	/**
 	 * Close rtabmap. This will delete rtabmap object if set.
@@ -332,8 +331,7 @@ private:
 	float _pathStuckDistance;
 	
 	//Multi-robot stuff
-	std::pair<int, std::set<int>> bufferCommunicationKF;
-	const OdometryInfo * info;
+	std::pair<int, std::set<int>> bufferCommunicationKF; //contains a pair (receiver's id, KF's id) to be transmitted 
 };
 
 } // namespace rtabmap

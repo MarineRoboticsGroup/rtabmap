@@ -5692,7 +5692,7 @@ std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId)
 
 void Rtabmap::cleanBroadcastedKF()
 {
-	int oRobotId = bufferCommunicationKF.first;
+	int oRobotId = bufferCommunicationKF.first; //Receiver's id
 	std::set<int>& selectedKF = bufferCommunicationKF.second;
 
 	_memory->cleanTransmittedKF(oRobotId, selectedKF);

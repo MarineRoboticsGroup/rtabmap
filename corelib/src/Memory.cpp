@@ -5554,14 +5554,15 @@ void Memory::getMetricConstraints(
 
 void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
 {
-	//Update memory
-	allLocalDescriptors.insert({curLocalKFId, words});
+	//Update memory (insert in the list of all keyframes a new (id, keyframe))
+	allLocalDescriptors.insert({curLocalKFId, words}); 
 
+	// Update all the robots' transmission queues with the new keyframes
 	for (unsigned int iRobot = 0 ; iRobot < _nb_robots; ++iRobot)
 	{
 		allQueuedKF.at(iRobot).insert(curLocalKFId);
 	}
-
+	//Increment the current keyframe's id
 	++curLocalKFId;
 }
 /**
@@ -5573,7 +5574,7 @@ void Memory::cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF)
 
 	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
 	{
-		if (selectedKF.find(*it) == selectedKF.end())
+		if (selectedKF.find(*it) == selectedKF.end()) //Looking for the KF's id. If found let's remove the element from the queue
 		{
 			++it;
 		}

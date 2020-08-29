@@ -336,9 +336,9 @@ private:
 	int _idMapCount;
 	
 	//multi-robot
-	int curLocalKFId;
-	std::vector<std::set<int>> allQueuedKF;
-	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors;
+	int curLocalKFId; //counting keyframes
+	std::vector<std::set<int>> allQueuedKF; //transmission queues (nbRobots)
+	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors; //map containing a pair (idKeyframe, descriptor)
 
 	Signature * _lastSignature;
 	int _lastGlobalLoopClosureId;
