@@ -88,10 +88,6 @@ public:
 
 	void init(const ParametersMap & parameters, const std::string & databasePath = "");
 	void init(const std::string & configFile = "", const std::string & databasePath = "");
-<<<<<<< HEAD
-=======
-
->>>>>>> 543897b4b9cd9b8700b4dea07d194c964124d358
 	void UpdateNCommunicateKF(const std::multimap<int, cv::KeyPoint>& words);
 	/**
 	 * Close rtabmap. This will delete rtabmap object if set.

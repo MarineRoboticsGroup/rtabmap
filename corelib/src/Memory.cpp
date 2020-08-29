@@ -5575,7 +5575,10 @@ void Memory::cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF)
 	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
 	{
 		if (selectedKF.find(*it) == selectedKF.end()) //Looking for the KF's id. If found let's remove the element from the queue
-		
+		{
+			++it;
+		}
+		else
 		{
 			it = allQueuedKF.at(oRobotId).erase(it);
 		}
