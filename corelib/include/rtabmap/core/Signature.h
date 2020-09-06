@@ -128,7 +128,7 @@ public:
 		_velocity[4]=vpitch;
 		_velocity[5]=vyaw;
 	}
-
+	void setId(int id){_id = id;}
 	const std::multimap<int, cv::Point3f> & getWords3() const {return _words3;}
 	const Transform & getPose() const {return _pose;}
 	cv::Mat getPoseCovariance() const;

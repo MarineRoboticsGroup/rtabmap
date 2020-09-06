@@ -88,7 +88,7 @@ public:
 			const std::list<int> & ids);
 	int incrementMapId(std::map<int, int> * reducedIds = 0);
 	void updateAge(int signatureId);
-
+	void updateExternalInfo(std::vector<std::pair<std::multimap<int, cv::KeyPoint>,int>> * bufferReceivedKF);
 	std::list<int> forget(const std::set<int> & ignoredIds = std::set<int>());
 	std::set<int> reactivateSignatures(const std::list<int> & ids, unsigned int maxLoaded, double & timeDbAccess);
 
@@ -258,6 +258,7 @@ private:
 	void clear();
 	void loadDataFromDb(bool postInitClosingEvents);
 	void moveToTrash(Signature * s, bool keepLinkedToGraph = true, std::list<int> * deletedWords = 0);
+	void updateExternalSignatures(std::multimap<int, cv::KeyPoint>& words, int robotId);
 
 	void moveSignatureToWMFromSTM(int id, int * reducedTo = 0);
 	void addSignatureToWmFromLTM(Signature * signature);
@@ -339,7 +340,8 @@ private:
 	int curLocalKFId; //counting keyframes
 	std::vector<std::set<int>> allQueuedKF; //transmission queues (nbRobots)
 	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors; //map containing a pair (idKeyframe, descriptor)
-
+	std::vector<std::vector<int>> signaturesByRobot;
+	
 	Signature * _lastSignature;
 	int _lastGlobalLoopClosureId;
 	bool _memoryChanged; // False by default, become true only when Memory::update() is called.

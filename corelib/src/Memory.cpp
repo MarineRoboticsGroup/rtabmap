@@ -154,8 +154,13 @@ Memory::Memory(const ParametersMap & parameters) :
 	// Initialization multi-robot stuff
 	allLocalDescriptors = std::map<int, std::multimap<int, cv::KeyPoint>>();
 	allQueuedKF = std::vector<std::set<int>>(_nb_robots);
+	signaturesByRobot = std::vector<std::vector<int>>(_nb_robots);
+
 	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
+	{
 		allQueuedKF.at(iRobot) = std::set<int>();
+		signaturesByRobot.at(iRobot) = std::vector<int>();
+	}
 }
 
 bool Memory::init(const std::string & dbUrl, bool dbOverwritten, const ParametersMap & parameters, bool postInitClosingEvents)
@@ -768,6 +773,19 @@ void Memory::preUpdate()
 	}
 }
 
+// All multi-robot-related updates to memory
+void Memory::updateExternalInfo(std::vector<std::pair<std::multimap<int, cv::KeyPoint>,int>> * bufferReceivedKF)
+{
+	//===========================================
+	// Update signatures with incoming keyframes
+	//============================================
+	for (auto it = bufferReceivedKF->begin();it!=bufferReceivedKF->end();)
+	{
+		updateExternalSignatures(it->first, it->second);
+		it = bufferReceivedKF->erase(it); //remove from buffer
+	}
+}
+
 bool Memory::update(
 		const SensorData & data,
 		Statistics * stats)
@@ -796,6 +814,7 @@ bool Memory::update(
 	t=timer.ticks()*1000;
 	if(stats) stats->addStatistic(Statistics::kTimingMemPre_update(), t);
 	UDEBUG("time preUpdate=%f ms", t);
+	
 
 	//============================================================
 	// Create a signature with the image received.
@@ -5552,13 +5571,37 @@ void Memory::getMetricConstraints(
 	}
 }
 
+/**
+ * Function called upon reception of keyframes from other robots
+ * Creates a very simple signature (we only need words) and stores it!
+**/
+void Memory::updateExternalSignatures(std::multimap<int, cv::KeyPoint>& words, int robotId)
+{
+	Signature * s = new Signature();
+	int curRobotCount = 0 ;
+	int nxtId;
+	if (!signaturesByRobot.at(robotId).size())
+	{
+		nxtId = - (robotId + 1);
+	}else
+	{
+		int curRobotCount = signaturesByRobot.at(robotId).size();
+		nxtId = - (curRobotCount * _nb_robots + robotId + 1); //We use negative ids to avoid any conflicts with our own signatures
+	}
+	signaturesByRobot.at(robotId).push_back(nxtId);
+	s->setWords(words);
+	s->setId(nxtId);
+
+	_signatures.insert(_signatures.end(), std::pair<int, rtabmap::Signature *>(s->id(), s));
+}
+
 void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
 {
 	//Update memory (insert in the list of all keyframes a new (id, keyframe))
 	allLocalDescriptors.insert({curLocalKFId, words}); 
 
 	// Update all the robots' transmission queues with the new keyframes
-	for (unsigned int iRobot = 0 ; iRobot < _nb_robots; ++iRobot)
+	for (int iRobot = 0 ; iRobot < _nb_robots; ++iRobot)
 	{
 		allQueuedKF.at(iRobot).insert(curLocalKFId);
 	}

@@ -204,7 +204,7 @@ public:
 	std::set<int> selectKeyframesToSend(int oRobotId);
 	std::pair<int, std::set<int>> getKFBuffer(){return bufferCommunicationKF;}
 	void cleanBroadcastedKF();
-	
+	void addToReceivedKFBuffer(std::pair<std::multimap<int, cv::KeyPoint>,int>& kf){bufferReceivedKF.push_back(kf);};
 private:
 	void optimizeCurrentMap(int id,
 			bool lookInDatabase,
@@ -332,6 +332,7 @@ private:
 	
 	//Multi-robot stuff
 	std::pair<int, std::set<int>> bufferCommunicationKF; //contains a pair (receiver's id, KF's id) to be transmitted 
+	std::vector<std::pair<std::multimap<int, cv::KeyPoint>,int>> bufferReceivedKF;
 };
 
 } // namespace rtabmap

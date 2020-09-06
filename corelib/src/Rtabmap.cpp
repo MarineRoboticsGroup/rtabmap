@@ -1142,6 +1142,7 @@ bool Rtabmap::process(
 	// Memory Update : Location creation + Add to STM + Weight Update (Rehearsal)
 	//============================================================
 	ULOGGER_INFO("Updating memory...");
+	_memory->updateExternalInfo(&bufferReceivedKF);
 	if(_rgbdSlamMode)
 	{
 		if(!_memory->update(data, odomPose, odomCovariance, odomVelocity, &statistics_))
@@ -1456,7 +1457,20 @@ bool Rtabmap::process(
 				}
 			}
 		}
+		
+		// ============================
+		// Inter-robot loop closures
+		// ============================
+		std::map<int, float> rawLikelihoodOtherRobot;
 
+		for (int iRobot = 0 ; iRobot < _memory->getNbRobots(); ++iRobot)
+		{
+			if (iRobot != _memory->getMyId())
+			{
+				//TODO
+				// rawLikelihoodOtherRobot = _memory->computeLikelihood();
+			}
+		}
 		//============================================================
 		// Local loop closure in TIME
 		//============================================================
