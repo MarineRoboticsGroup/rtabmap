@@ -220,7 +220,10 @@ public:
 	bool isGraphReduced() const {return _reduceGraph;}
 	const std::vector<double> & getOdomMaxInf() const {return _odomMaxInf;}
 	bool isOdomGravityUsed() const {return _useOdometryGravity;}
-
+	int getNbRobots() const {return _nb_robots;}
+	int getMyId() const {return _my_id;}
+	std::vector<std::set<int>> getAllQueuedKF() const{return allQueuedKF;}
+	std::map<int, std::multimap<int, cv::KeyPoint>> getAllDescriptorsKF() const { return allLocalDescriptors;};
 	void dumpMemoryTree(const char * fileNameTree) const;
 	virtual void dumpMemory(std::string directory) const;
 	virtual void dumpSignatures(const char * fileNameSign, bool words3D) const;
@@ -246,7 +249,10 @@ public:
 			int oldId,
 			const std::map<int, Transform> & poses,
 			RegistrationInfo * info = 0);
-
+	void updateKFQueues(const std::multimap<int, cv::KeyPoint>& words);
+	void cleanTransmittedKF();
+	void setBufferKF(std::pair<int, std::set<int>>  buf){bufferCommunicationKF = buf;}
+	std::pair<int, std::set<int>>  getBufferKF () const {return bufferCommunicationKF ;}
 private:
 	void preUpdate();
 	void addSignatureToStm(Signature * signature, const cv::Mat & covariance);
@@ -325,9 +331,16 @@ private:
 	bool _detectMarkers;
 	float _markerLinVariance;
 	float _markerAngVariance;
-
+	int _my_id;
+	int _nb_robots;
 	int _idCount;
 	int _idMapCount;
+	
+	//multi-robot
+	int curLocalKFId; //counting keyframes
+	std::vector<std::set<int>> allQueuedKF; //transmission queues (nbRobots)
+	std::map<int, std::multimap<int, cv::KeyPoint>> allLocalDescriptors; //map containing a pair (idKeyframe, descriptor)
+
 	Signature * _lastSignature;
 	int _lastGlobalLoopClosureId;
 	bool _memoryChanged; // False by default, become true only when Memory::update() is called.
@@ -360,6 +373,8 @@ private:
 	OccupancyGrid * _occupancy;
 
 	MarkerDetector * _markerDetector;
+
+	std::pair<int, std::set<int>> bufferCommunicationKF; //contains a pair (receiver's id, KF's id) to be transmitted 
 };
 
 } // namespace rtabmap

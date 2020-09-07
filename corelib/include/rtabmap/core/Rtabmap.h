@@ -88,8 +88,7 @@ public:
 
 	void init(const ParametersMap & parameters, const std::string & databasePath = "");
 	void init(const std::string & configFile = "", const std::string & databasePath = "");
-
-	void communicateKF(const OdometryInfo * info);
+	void UpdateNCommunicateKF(const std::multimap<int, cv::KeyPoint>& words);
 	/**
 	 * Close rtabmap. This will delete rtabmap object if set.
 	 * @param databaseSaved true=database saved, false=database discarded.
@@ -202,9 +201,7 @@ public:
 	std::pair<int, float> selectHypothesis(const std::map<int, float> & posterior,
 											const std::map<int, float> & likelihood) const;
 	//Multi-robot stuff
-	std::set<int> selectKeyframesToSend(int oRobotId, const std::vector<std::set<int>> &allQueuedKF);
-	std::pair<int, std::set<int>> getKFBuffer(){return bufferCommunicationKF;}
-	std::map<int, std::multimap<int, cv::KeyPoint>> getAllDescriptorsKF(){return info->allLocalDescriptors;}
+	std::set<int> selectKeyframesToSend(int oRobotId);
 	void cleanBroadcastedKF();
 	
 private:
@@ -333,10 +330,6 @@ private:
 	float _pathStuckDistance;
 	
 	//Multi-robot stuff
-	std::pair<int, std::set<int>> bufferCommunicationKF;
-	std::vector<std::set<int>> allQueuedKF;
-	std::map<int, std::multimap<int, cv::KeyPoint>> localDescriptorsKF_;
-	const OdometryInfo * info;
 };
 
 } // namespace rtabmap

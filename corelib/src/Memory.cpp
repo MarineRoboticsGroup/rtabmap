@@ -121,6 +121,9 @@ Memory::Memory(const ParametersMap & parameters) :
 	_linksChanged(false),
 	_signaturesAdded(0),
 	_allNodesInWM(true),
+	_my_id(Parameters::defaultRtabmapNbRobots()),
+	_nb_robots(Parameters::defaultRtabmapMyId()),
+	curLocalKFId(0),
 
 	_badSignRatio(Parameters::defaultKpBadSignRatio()),
 	_tfIdfLikelihoodUsed(Parameters::defaultKpTfIdfLikelihoodUsed()),
@@ -145,7 +148,15 @@ Memory::Memory(const ParametersMap & parameters) :
 
 	_occupancy = new OccupancyGrid(parameters);
 	_markerDetector = new MarkerDetector(parameters);
+
 	this->parseParameters(parameters);
+
+	// Initialization multi-robot stuff
+	setBufferKF(std::make_pair(-1, std::set<int>()));
+	allLocalDescriptors = std::map<int, std::multimap<int, cv::KeyPoint>>();
+	allQueuedKF = std::vector<std::set<int>>(_nb_robots);
+	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
+		allQueuedKF.at(iRobot) = std::set<int>();
 }
 
 bool Memory::init(const std::string & dbUrl, bool dbOverwritten, const ParametersMap & parameters, bool postInitClosingEvents)
@@ -577,6 +588,8 @@ void Memory::parseParameters(const ParametersMap & parameters)
 	Parameters::parse(params, Parameters::kMarkerVarianceLinear(), _markerLinVariance);
 	Parameters::parse(params, Parameters::kMarkerVarianceAngular(), _markerAngVariance);
 	Parameters::parse(params, Parameters::kMemLocalizationDataSaved(), _localizationDataSaved);
+	Parameters::parse(params, Parameters::kRtabmapNbRobots(), _nb_robots);
+	Parameters::parse(params, Parameters::kRtabmapMyId(), _my_id);
 
 	UASSERT_MSG(_maxStMemSize >= 0, uFormat("value=%d", _maxStMemSize).c_str());
 	UASSERT_MSG(_similarityThreshold >= 0.0f && _similarityThreshold <= 1.0f, uFormat("value=%f", _similarityThreshold).c_str());
@@ -5540,4 +5553,38 @@ void Memory::getMetricConstraints(
 	}
 }
 
+void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
+{
+	//Update memory (insert in the list of all keyframes a new (id, keyframe))
+	allLocalDescriptors.insert({curLocalKFId, words}); 
+
+	// Update all the robots' transmission queues with the new keyframes
+	for (unsigned int iRobot = 0 ; iRobot < _nb_robots; ++iRobot)
+	{
+		allQueuedKF.at(iRobot).insert(curLocalKFId);
+	}
+	//Increment the current keyframe's id
+	++curLocalKFId;
+}
+/**
+ * Removes transmitted keyframes' ids from the queue
+ * of the corresponding robot
+**/
+void Memory::cleanTransmittedKF()
+{
+	int oRobotId = bufferCommunicationKF.first;
+	std::set<int> selectedKF = bufferCommunicationKF.second;
+	setBufferKF(std::make_pair(-1, std::set<int>()));
+	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
+	{
+		if (selectedKF.find(*it) == selectedKF.end()) //Looking for the KF's id. If found let's remove the element from the queue
+		{
+			++it;
+		}
+		else
+		{
+			it = allQueuedKF.at(oRobotId).erase(it);
+		}
+	}
+}
 } // namespace rtabmap

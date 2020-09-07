@@ -8,6 +8,9 @@ rtabmap
 [![License][license-image]][license]
 [![Build Status](http://mrg-beast.csail.mit.edu:8080/buildStatus/icon?job=rtabmap%2Fmaster)](http://mrg-beast.csail.mit.edu:8080/job/rtabmap/job/master/)
 
+[![Release][release-image]][releases]
+[![License][license-image]][license]
+
 [release-image]: https://img.shields.io/badge/release-0.20.0-green.svg?style=flat
 [releases]: https://github.com/introlab/rtabmap/releases
 
