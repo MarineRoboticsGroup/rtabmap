@@ -202,6 +202,7 @@ public:
 											const std::map<int, float> & likelihood) const;
 	//Multi-robot stuff
 	std::set<int> selectKeyframesToSend(int oRobotId);
+	void cleanBroadcastedKF();
 	
 private:
 	void optimizeCurrentMap(int id,

@@ -5691,4 +5691,8 @@ std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId)
 	return _memory->getAllQueuedKF().at(oRobotId);
 }
 
+void Rtabmap::cleanBroadcastedKF()
+{
+	_memory->cleanTransmittedKF();
+}
 } // namespace rtabmap
