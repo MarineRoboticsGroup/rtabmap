@@ -5677,9 +5677,10 @@ void Rtabmap::UpdateNCommunicateKF(const std::multimap<int, cv::KeyPoint>& words
 	// Multi-robot stuff --- Temporary code 
 	// In the future, will be directly triggered by a range measurement
 	//===========================================================
-	int oRobot = (_memory->getMyId()+1)%_memory->getNbRobots();	
+	int oRobot = (_memory->getMyId()+1)%_memory->getNbRobots();
 	std::set<int> selectedKF = selectKeyframesToSend(oRobot);
-	bufferCommunicationKF = std::make_pair(oRobot, selectedKF);
+	std::pair<int, std::set<int>> toTransmit = std::make_pair(oRobot, selectedKF);
+	_memory->setBufferKF(toTransmit);
 }
 
 std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId)
@@ -5690,11 +5691,4 @@ std::set<int> Rtabmap::selectKeyframesToSend(int oRobotId)
 	return _memory->getAllQueuedKF().at(oRobotId);
 }
 
-void Rtabmap::cleanBroadcastedKF()
-{
-	int oRobotId = bufferCommunicationKF.first; //Receiver's id
-	std::set<int>& selectedKF = bufferCommunicationKF.second;
-
-	_memory->cleanTransmittedKF(oRobotId, selectedKF);
-}
 } // namespace rtabmap

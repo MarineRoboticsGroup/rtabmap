@@ -250,8 +250,9 @@ public:
 			const std::map<int, Transform> & poses,
 			RegistrationInfo * info = 0);
 	void updateKFQueues(const std::multimap<int, cv::KeyPoint>& words);
-	void cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF);
-
+	void cleanTransmittedKF();
+	void setBufferKF(std::pair<int, std::set<int>>  buf){bufferCommunicationKF = buf;}
+	std::pair<int, std::set<int>>  getBufferKF () const {return bufferCommunicationKF ;}
 private:
 	void preUpdate();
 	void addSignatureToStm(Signature * signature, const cv::Mat & covariance);
@@ -372,6 +373,8 @@ private:
 	OccupancyGrid * _occupancy;
 
 	MarkerDetector * _markerDetector;
+
+	std::pair<int, std::set<int>> bufferCommunicationKF; //contains a pair (receiver's id, KF's id) to be transmitted 
 };
 
 } // namespace rtabmap

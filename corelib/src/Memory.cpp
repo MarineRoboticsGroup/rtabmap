@@ -152,6 +152,7 @@ Memory::Memory(const ParametersMap & parameters) :
 	this->parseParameters(parameters);
 
 	// Initialization multi-robot stuff
+	setBufferKF(std::make_pair(-1, std::set<int>()));
 	allLocalDescriptors = std::map<int, std::multimap<int, cv::KeyPoint>>();
 	allQueuedKF = std::vector<std::set<int>>(_nb_robots);
 	for (int iRobot = 0 ; iRobot < _nb_robots ; ++iRobot)
@@ -5569,9 +5570,11 @@ void Memory::updateKFQueues(const std::multimap<int, cv::KeyPoint>& words)
  * Removes transmitted keyframes' ids from the queue
  * of the corresponding robot
 **/
-void Memory::cleanTransmittedKF(int oRobotId, std::set<int>& selectedKF)
+void Memory::cleanTransmittedKF()
 {
-
+	int oRobotId = bufferCommunicationKF.first;
+	std::set<int> selectedKF = bufferCommunicationKF.second;
+	setBufferKF(std::make_pair(-1, std::set<int>()));
 	for (auto it = allQueuedKF.at(oRobotId).begin(); it!= allQueuedKF.at(oRobotId).end();)
 	{
 		if (selectedKF.find(*it) == selectedKF.end()) //Looking for the KF's id. If found let's remove the element from the queue

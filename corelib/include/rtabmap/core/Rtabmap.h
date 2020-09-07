@@ -202,8 +202,6 @@ public:
 											const std::map<int, float> & likelihood) const;
 	//Multi-robot stuff
 	std::set<int> selectKeyframesToSend(int oRobotId);
-	std::pair<int, std::set<int>> getKFBuffer(){return bufferCommunicationKF;}
-	void cleanBroadcastedKF();
 	
 private:
 	void optimizeCurrentMap(int id,
@@ -331,7 +329,6 @@ private:
 	float _pathStuckDistance;
 	
 	//Multi-robot stuff
-	std::pair<int, std::set<int>> bufferCommunicationKF; //contains a pair (receiver's id, KF's id) to be transmitted 
 };
 
 } // namespace rtabmap
